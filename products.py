@@ -33,7 +33,7 @@ class Product:
     return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
 
   def buy(self, quantity):
-    if len(quantity) < 1:
+    if len(str(quantity)) < 1:
       raise ValueError("Please enter a quantity.\n")
     if int(quantity) < 1:
       raise ValueError("Quantity cannot be below 1.\n")

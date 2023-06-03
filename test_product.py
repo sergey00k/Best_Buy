@@ -10,17 +10,17 @@ def test_invalid_details():
         iphone11 = products.Product("Iphone 11", price=-90, quantity=-900)
         assert False
     except ValueError as e:
-        assert str(e) == "Price and quantity must be greater than 0."
+        assert str(e) == "Price and quantity must be greater than 0.\n"
     try:
         iphone11 = products.Product("", price=90, quantity=900)
         assert False
     except ValueError as e:
-        assert str(e) == "Name must not be empty."
+        assert str(e) == "Name must not be empty.\n"
     try:
         iphone11 = products.Product("Iphone", price="90", quantity=900)
         assert False
     except ValueError as e:
-        assert str(e) == "Invalid input type when creating new product."
+        assert str(e) == "Invalid input type when creating new product.\n"
 
 def test_quantity_0():
     iphone11 = products.Product("Iphone 11", price=500, quantity=1000)
@@ -35,7 +35,7 @@ def test_buying():
         iphone11.buy(10000) 
         assert False
     except ValueError as e:
-        assert str(e) ==  "Chosen quantity exceeds amount available in stock."
+        assert str(e) ==  f"Chosen quantity exceeds amount available in stock. ({iphone11.quantity} available)\n"
 
 
 pytest.main()
