@@ -59,6 +59,20 @@ class NonStocked(Product):
     
     def show(self):
       return f"{self.name}, Price: {self.price}"
+    
+class LimitedProduct(Product):
+  
+  def __init__(self, name, price, quantity, maximum):
+    super().__init__(name, price, quantity)
+    self.maximum = maximum
+
+  def buy(self, quantity):
+    if int(quantity) > self.maximum:
+      raise ValueError(f"This product has a maximum of {self.maximum} units per person. (chose {quantity})\n")
+    return super().buy(quantity)
+
+  def show(self):
+    return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}"
 
 def main():
   bose = Product("Bose QuietComfort Earbuds", price=250, quantity=500)
