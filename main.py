@@ -3,7 +3,8 @@ import products
 # setup initial stock of inventory
 product_list = [ products.Product("MacBook Air M2", price=1450, quantity=100),
                  products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-                 products.Product("Google Pixel 7", price=500, quantity=250)
+                 products.Product("Google Pixel 7", price=500, quantity=250),
+                 products.NonStocked("Online Course", price=100)
                ]
 best_buy = store.Store(product_list)
 
@@ -37,43 +38,36 @@ def make_order(store):
   print("\n---------------")
   total_price = 0
   shop_list = []
-  quantity_track = {}
   while True:
+    flag = False
     chosen_item = input("Enter a product to buy (leave blank to finish order): ")
     if len(chosen_item) < 1:
       break
-    chosen_quantity = input("Enter amount needed: ")
-    if len(chosen_quantity) < 1:
-      print("Error: Please enter a quantity.")
-      continue
-    if int(chosen_quantity) < 1:
-      print("Error: Quantity cannot be less than 1.")
-      continue
     for product in store.get_all_products():
       if product.name == chosen_item:
         chosen_item = product
-        quantity_track[chosen_item] = quantity_track.get(chosen_item, 0) + int(chosen_quantity)
-        if quantity_track[chosen_item] > product.quantity:
-          print(f"Error: Product sold out for {quantity_track[chosen_item] - product.quantity} previously chosen.")
-          chosen_quantity = int(chosen_quantity) - (quantity_track[chosen_item] - product.quantity)
-          product.deactivate()
-        flag = False
-        break
-      else:
-        if product == store.get_all_products()[-1]:
-          print("Error: Product could not be found (please check spelling).")
-          flag = True
+        if isinstance(product, products.NonStocked):
+          try:
+            total_price += chosen_item.buy()
+            flag = True
+            break
+          except ValueError as e:
+            print("Error: ", str(e))
+            continue
     if flag:
-      flag = False
       continue
-    if int(chosen_quantity) > chosen_item.quantity:
-      print("Error: Quantity chosen is too large.")
-      continue
-    paired = (chosen_item, int(chosen_quantity))
-    shop_list.append(paired)
-  if len(shop_list) >= 1:
-    total_price = store.order(shop_list)
-    print(f"\nTotal price: {total_price}")
+    chosen_quantity = input("Enter amount needed: ")
+    paired = (chosen_item, chosen_quantity)
+    shop_list = [paired]
+    try:
+      price = store.order(shop_list)
+      if price == None:
+        continue
+      else:
+        total_price += price
+    except ValueError as e:
+      print("\nError: ", str(e))
+  print(f"\nTotal price: {total_price}")
   return start(store)
     
 start(best_buy)

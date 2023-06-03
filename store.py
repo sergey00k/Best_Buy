@@ -1,6 +1,5 @@
-
 class Store:
-
+  import products
   def __init__(self, products):
     self.products = products
 
@@ -31,12 +30,15 @@ class Store:
     self.price = 0
     self.items = []
     for product in shopping_list:
-      self.price = self.price + (product[0].price * product[1])
-      product[0].quantity = product[0].quantity - product[1]
-    return self.price
+      if product[0] not in self.products:
+        raise ValueError("Product could not be found (please check spelling).\n")
+      try:
+        self.price = self.price + product[0].buy(product[1])
+        return self.price
+      except ValueError as e:
+        print(f"\nError: {str(e)}")
 
 def main():
-  import products
   product_list = [products.Product("MacBook Air M2", price=1450, quantity=100),
               products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
               products.Product("Google Pixel 7", price=500, quantity=250),
