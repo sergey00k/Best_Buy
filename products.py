@@ -1,6 +1,12 @@
 class Product:
 
   def __init__(self, name, price, quantity):
+    if type(price) is not int or type(name) is not str or type(quantity) is not int:
+      raise ValueError("Invalid input type when creating new product.")
+    if price <= 0 or quantity <= 0:
+      raise ValueError("Price and quantity must be greater than 0.")
+    if len(name) <= 0:
+      raise ValueError("Name must not be empty.")
     self.price = float(price)
     self.name = str(name)
     self.quantity = int(quantity)
@@ -29,6 +35,8 @@ class Product:
   def buy(self, quantity):
     if int(quantity) < 1:
       raise ValueError("Quantity cannot be below 1.")
+    if int(quantity) > self.quantity:
+      raise ValueError("Chosen quantity exceeds amount available in stock.")
     self.quantity = self.quantity - int(quantity)
     if self.quantity == 0:
       self.deactivate()
