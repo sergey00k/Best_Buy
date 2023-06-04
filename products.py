@@ -11,6 +11,13 @@ class Product:
     self.name = str(name)
     self.quantity = int(quantity)
     self.active = True
+    self.promotion = None
+  
+  def set_promotion(self, promotion):
+    self.promotion = promotion
+
+  def get_promotion(self):
+    return self.promotion.name
 
   def get_quantity(self):
     return float(self.quantity)
@@ -30,7 +37,10 @@ class Product:
     self.active = False
 
   def show(self):
-    return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
+    if self.promotion != None:
+      return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Promotion: {self.promotion.name}"
+    else:
+      return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
 
   def buy(self, quantity):
     if len(str(quantity)) < 1:
@@ -42,7 +52,10 @@ class Product:
     self.quantity = self.quantity - int(quantity)
     if self.quantity == 0:
       self.deactivate()
-    total = self.price * int(quantity)
+    if self.promotion == None:
+      total = self.price * int(quantity)
+    else:
+      total = self.promotion.apply_promotion(self.price, int(quantity))
     return total
   
 class NonStocked(Product):
@@ -54,11 +67,17 @@ class NonStocked(Product):
         self.active = True
 
     def buy(self):
-      total = self.price
+      if self.promotion == None:
+        total = self.price
+      else:
+        total = self.promotion.apply_promotion(self.price, 1)
       return total
     
     def show(self):
-      return f"{self.name}, Price: {self.price}"
+      if self.promotion != None:
+        return f"{self.name}, Price: {self.price}, Promotion: {self.promotion.name}"
+      else:
+        return f"{self.name}, Price: {self.price}"
     
 class LimitedProduct(Product):
   
@@ -72,8 +91,11 @@ class LimitedProduct(Product):
     return super().buy(quantity)
 
   def show(self):
-    return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}"
-
+    if self.promotion != None:
+      return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}, Promotion: {self.promotion.name}"
+    else:
+      return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}"
+  
 def main():
   bose = Product("Bose QuietComfort Earbuds", price=250, quantity=500)
   mac = Product("MacBook Air M2", price=1450, quantity=100)
